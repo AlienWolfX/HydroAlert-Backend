@@ -23,9 +23,9 @@
     .logo-img { width:36px; height:36px; border-radius:8px; object-fit:cover; display:inline-block }
   </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
   <div class="d-flex">
-    <aside class="sidebar p-3 d-none d-md-block" style="width:240px">
+    <aside class="sidebar p-3 d-none d-md-block d-flex flex-column" style="width:240px">
       <div class="mb-4">
         <div class="d-flex align-items-center gap-2">
           <img src="app/views/assets/img/app_icon.png" class="logo-img" alt="HydroAlert">
@@ -40,6 +40,7 @@
         <a class="nav-link active p-2 mb-1" href="?url=info/index"><i class="bi bi-bell me-2"></i>Information</a>
       </nav>
       <div class="mt-4 small text-white-50">Welcome <strong><?php echo htmlspecialchars($user['username'] ?? ''); ?>!</strong></div>
+      <div class="mt-auto pt-3 border-top pt-3 small text-white-50 text-center">&copy; <?php echo date('Y'); ?> HydroAlert</div>
     </aside>
 
     <main class="flex-grow-1 p-4">
@@ -132,6 +133,7 @@
       </div>
     </main>
   </div>
+  <footer class="mt-auto text-center small text-muted py-2 border-top">&copy; <?php echo date('Y'); ?> HydroAlert</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="app/views/assets/js/evacuation.js"></script>
