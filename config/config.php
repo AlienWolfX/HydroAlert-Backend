@@ -5,6 +5,7 @@ return [
     'db_name' => getenv('DB_NAME') ?: 'hydroalert_db',
     'db_user' => getenv('DB_USER') ?: 'root',
     'db_pass' => getenv('DB_PASS') ?: '',
+    'api_key' => getenv('API_KEY') ?: '',
     'db_charset' => 'utf8mb4',
     'uptime_start' => '2025-11-10T16:00:00Z',
 ];
