@@ -36,8 +36,8 @@
         </div>
       </div>
       <nav class="nav flex-column">
-        <a class="nav-link active p-2 mb-1" href="#"><i class="bi bi-speedometer2 me-2"></i>Overview</a>
-        <a class="nav-link p-2 mb-1" href="#"><i class="bi bi-bell me-2"></i>Information</a>
+        <a class="nav-link active p-2 mb-1" href="?url=home/index"><i class="bi bi-speedometer2 me-2"></i>Overview</a>
+        <a class="nav-link p-2 mb-1" href="?url=info/index"><i class="bi bi-bell me-2"></i>Information</a>
       </nav>
       <div class="mt-4 small text-white-50">Welcome <strong><?php echo htmlspecialchars($user['username'] ?? ''); ?>!</strong></div>
     </aside>
