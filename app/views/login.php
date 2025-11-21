@@ -42,6 +42,12 @@
             <div class="alert alert-danger" role="alert"><?php echo htmlspecialchars($error); ?></div>
           <?php endif; ?>
 
+          <?php if (!empty($_GET['timeout'])): ?>
+            <div class="alert alert-warning" role="alert">
+              Your session timed out due to inactivity. Please sign in again.
+            </div>
+          <?php endif; ?>
+
           <form method="post" action="?url=auth/login">
             <div class="mb-3">
               <label class="form-label">Username</label>

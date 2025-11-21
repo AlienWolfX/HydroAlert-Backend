@@ -4,6 +4,19 @@ if (session_status() === PHP_SESSION_NONE) {
 	session_start();
 }
 
+// Session timeout
+$sessionTimeout = 60; // seconds
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $sessionTimeout)) {
+
+	unset($_SESSION['user']);
+	session_unset();
+	session_destroy();
+	header('Location: /HydroAlert/?url=auth/login&timeout=1');
+	exit;
+}
+
+$_SESSION['last_activity'] = time();
+
 require __DIR__ . '/config/config.php';
 require __DIR__ . '/app/core/Database.php';
 require __DIR__ . '/app/core/Model.php';

@@ -52,67 +52,44 @@
       </div>
 
       <div class="row g-3">
-        <div class="col-12 col-md-4">
-          <div class="card card-soft p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="text-muted">Sensors Offline</div>
-                <div class="h3">0</div>
-              </div>
-              <div class="fs-3 text-primary"><i class="bi bi-x-square-fill"></i></div>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-md-4">
-          <div class="card card-soft p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="text-muted">Sensors Online</div>
-                <div class="h3">12</div>
-              </div>
-              <div class="fs-3 text-success"><i class="bi bi-check-square-fill"></i></div>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-md-4">
-          <div class="card card-soft p-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <?php
-                  $cfg = require __DIR__ . '/../../config/config.php';
-                  $uptimeStart = $cfg['uptime_start'] ?? '2025-01-01T00:00:00Z';
-                ?>
-                <div class="text-muted">Dashboard Uptime</div>
-                <div class="h3" id="uptimeCounter" data-start="<?php echo htmlspecialchars($uptimeStart); ?>">Calculating...</div>
-                <!-- <div class="small text-muted">since <span id="uptimeSince"><?php echo htmlspecialchars($uptimeStart); ?></span></div> -->
-              </div>
-              <div class="fs-3 text-info"><i class="bi bi-arrow-up-square-fill"></i></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row g-3 mt-3">
         <div class="col-12 col-lg-8">
           <div class="card card-soft p-3" style="min-height:320px;">
             <h5>Water Level Trend</h5>
             <div style="position:relative;height:260px;">
               <canvas id="waterChart"></canvas>
             </div>
-            <p class="text-muted mt-2">Showing recent water level measurements (meters). Data shown is sample data — replace with real sensor data from the backend.</p>
+            <p class="text-muted mt-2">Showing recent water level measurements (meters).</p>
           </div>
         </div>
+
         <div class="col-12 col-lg-4">
-          <div class="card card-soft p-3 text-center">
-            <h5>Local Time — Philippines</h5>
-            <div class="display-6 fw-bold" id="phTime">--:--:--</div>
-            <div class="small text-muted" id="phDate">Loading date...</div>
-            <div class="mt-3">
-              <button class="btn btn-outline-secondary btn-sm" id="toggleClock">24h</button>
+          <div class="card card-soft p-3" style="min-height:320px;">
+            <div class="d-flex flex-column justify-content-between h-100">
+              <div class="text-center">
+                <h5>Local Time — Philippines</h5>
+                <div class="display-6 fw-bold" id="phTime">--:--:--</div>
+                <div class="small text-muted" id="phDate">Loading date...</div>
+                <div class="mt-3">
+                  <button class="btn btn-outline-secondary btn-sm" id="toggleClock">24h</button>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="w-100">
+                    <?php
+                      $cfg = require __DIR__ . '/../../config/config.php';
+                      $uptimeStart = $cfg['uptime_start'] ?? '2025-01-01T00:00:00Z';
+                    ?>
+                    <div class="text-muted text-center">Dashboard Uptime</div>
+                    <div class="display-6 fw-bold text-center mb-0" id="uptimeCounter" data-start="<?php echo htmlspecialchars($uptimeStart); ?>">Calculating...</div>
+                  </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Trend & right-column moved up; sensors cards removed -->
     </main>
   </div>
   <footer class="mt-auto text-center small text-muted py-2 border-top">&copy; <?php echo date('Y'); ?> HydroAlert</footer>
