@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Session timeout
-$sessionTimeout = 60; // seconds
+$sessionTimeout = 2000; // seconds
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $sessionTimeout)) {
 
 	unset($_SESSION['user']);

@@ -42,7 +42,7 @@ $sql = 'SELECT id, imei, distance, water_level, status, device_timestamp, max_de
 if (!empty($where)) {
     $sql .= ' WHERE ' . implode(' AND ', $where);
 }
-$sql .= ' ORDER BY device_timestamp DESC, id DESC LIMIT :limit';
+$sql .= ' ORDER BY created_at DESC, id DESC LIMIT :limit';
 
 try {
     $stmt = $pdo->prepare($sql);
