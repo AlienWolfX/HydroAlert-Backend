@@ -63,7 +63,7 @@ try {
             $dt = intval($dt / 1000);
         }
         $r['device_timestamp'] = $dt;
-        $r['created_at'] = date(DATE_ATOM, strtotime($r['created_at']));
+
         $r['distance'] = $r['distance'] !== null ? floatval($r['distance']) : null;
         $r['water_level'] = $r['water_level'] !== null ? intval($r['water_level']) : null;
         $r['max_depth'] = $r['max_depth'] !== null ? floatval($r['max_depth']) : null;

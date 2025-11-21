@@ -32,7 +32,7 @@
               <img src="app/views/assets/img/app_icon.png" class="logo-img" alt="HydroAlert">
               <div>
                 <div class="h5 mb-0">HydroAlert</div>
-                <small class="text-muted">Monitoring & Alerts</small>
+                <small class="text-muted">Monitoring & Management</small>
               </div>
             </div>
             <div class="text-end muted-small">v0.1</div>
@@ -68,11 +68,8 @@
             <div class="d-grid mb-2">
               <button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-box-arrow-in-right me-2"></i>Sign in</button>
             </div>
-
-            <div class="text-center muted-small">Need help? Contact your administrator.</div>
           </form>
         </div>
-        <p class="text-center mt-3 text-white-50"><small>To test: create a user in the `users` table with `password_hash()`</small></p>
       </div>
     </div>
   </div>

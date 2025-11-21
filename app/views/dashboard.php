@@ -88,8 +88,29 @@
           </div>
         </div>
       </div>
-
-      <!-- Trend & right-column moved up; sensors cards removed -->
+      <div class="row mt-3">
+        <div class="col-12">
+          <div class="card card-soft p-3">
+            <h5>Recent Readings</h5>
+            <div style="max-height:260px; overflow:auto;">
+              <table class="table table-sm table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>IMEI</th>
+                    <th>Distance (m)</th>
+                    <th>Water Level</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="readingsBody">
+                  <tr><td colspan="5" class="text-muted text-center">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
   <footer class="mt-auto text-center small text-muted py-2 border-top">&copy; <?php echo date('Y'); ?> HydroAlert</footer>
@@ -98,6 +119,42 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="app/views/assets/js/uptime.js"></script>
   <script src="app/views/assets/js/clock.js"></script>
+  <script>
+    async function loadReadings() {
+      const tbody = document.getElementById('readingsBody');
+      try {
+        const res = await fetch('api/getReadings.php?limit=10');
+        const json = await res.json();
+        tbody.innerHTML = '';
+        if (json && json.success && Array.isArray(json.data) && json.data.length) {
+          json.data.slice().reverse().forEach(r => {
+            // Display created_at exactly as returned from the DB/API (no timezone re-formatting)
+            let time = '';
+            if (r.created_at) {
+              time = r.created_at;
+            } else if (r.device_timestamp) {
+              const d2 = new Date(r.device_timestamp * 1000);
+              if (!isNaN(d2)) time = d2.toISOString();
+            }
+            const distance = r.distance !== null && r.distance !== undefined ? Number(r.distance).toFixed(2) : '';
+            const wl = r.water_level !== null && r.water_level !== undefined ? r.water_level : '';
+            const imei = r.imei || '';
+            const status = r.status || '';
+            const tr = `<tr><td>${time}</td><td>${imei}</td><td>${distance}</td><td>${wl}</td><td>${status}</td></tr>`;
+            tbody.insertAdjacentHTML('beforeend', tr);
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="5" class="text-muted text-center">No readings</td></tr>';
+        }
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-danger text-center">Error loading readings</td></tr>';
+        console.error('loadReadings error', e);
+      }
+    }
+
+    loadReadings();
+    setInterval(loadReadings, 5000);
+  </script>
   <script>
     const sampleLabels = ['-6h','-5h','-4h','-3h','-2h','-1h','Now'];
     const sampleData = [2.10,2.30,2.50,2.70,2.60,2.80,3.00];
