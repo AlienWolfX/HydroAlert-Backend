@@ -120,15 +120,27 @@
   <script src="app/views/assets/js/uptime.js"></script>
   <script src="app/views/assets/js/clock.js"></script>
   <script>
+    // chart instance (created on first load)
+    window.waterChart = null;
+
     async function loadReadings() {
       const tbody = document.getElementById('readingsBody');
       try {
-        const res = await fetch('api/getReadings.php?limit=10');
-        const json = await res.json();
+        // build an absolute URL relative to the current page so the API path works
+        const apiUrl = new URL('api/getReadings.php?limit=10', window.location.href).href;
+        const res = await fetch(apiUrl, { cache: 'no-cache' });
+        if (!res.ok) {
+          const txt = await res.text().catch(() => '');
+          throw new Error('HTTP ' + res.status + ' - ' + txt);
+        }
+        const json = await res.json().catch(e => { throw new Error('Invalid JSON response: ' + e.message); });
         tbody.innerHTML = '';
         if (json && json.success && Array.isArray(json.data) && json.data.length) {
-          json.data.slice().reverse().forEach(r => {
-            // Display created_at exactly as returned from the DB/API (no timezone re-formatting)
+          // prepare arrays for table and chart (oldest first)
+          const rows = json.data.slice().reverse();
+          const labels = [];
+          const data = [];
+          rows.forEach(r => {
             let time = '';
             if (r.created_at) {
               time = r.created_at;
@@ -137,17 +149,56 @@
               if (!isNaN(d2)) time = d2.toISOString();
             }
             const distance = r.distance !== null && r.distance !== undefined ? Number(r.distance).toFixed(2) : '';
-            const wl = r.water_level !== null && r.water_level !== undefined ? r.water_level : '';
+            const wl = r.water_level !== null && r.water_level !== undefined ? r.water_level : null;
             const imei = r.imei || '';
             const status = r.status || '';
-            const tr = `<tr><td>${time}</td><td>${imei}</td><td>${distance}</td><td>${wl}</td><td>${status}</td></tr>`;
+            const tr = `<tr><td>${time}</td><td>${imei}</td><td>${distance}</td><td>${wl !== null ? wl : ''}</td><td>${status}</td></tr>`;
             tbody.insertAdjacentHTML('beforeend', tr);
+            labels.push(time);
+            data.push(wl !== null ? wl : null);
           });
+
+          // update or create chart
+          const canvas = document.getElementById('waterChart');
+          if (canvas) {
+            if (window.waterChart) {
+              window.waterChart.data.labels = labels;
+              window.waterChart.data.datasets[0].data = data;
+              window.waterChart.update();
+            } else {
+              const ctx = canvas.getContext('2d');
+              window.waterChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    label: 'Water Level (%)',
+                    data: data,
+                    borderColor: '#0ea5a3',
+                    backgroundColor: 'rgba(14,165,163,0.12)',
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 3
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Percent' } },
+                    x: { title: { display: true, text: 'Time' } }
+                  },
+                  plugins: { legend: { display: true, position: 'top' } }
+                }
+              });
+            }
+          }
         } else {
           tbody.innerHTML = '<tr><td colspan="5" class="text-muted text-center">No readings</td></tr>';
         }
       } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-danger text-center">Error loading readings</td></tr>';
+        const msg = String(e && e.message ? e.message : e);
+        tbody.innerHTML = `<tr><td colspan="5" class="text-danger text-center">Error loading readings: ${msg}</td></tr>`;
         console.error('loadReadings error', e);
       }
     }
@@ -162,8 +213,19 @@
     (function() {
       const canvas = document.getElementById('waterChart');
       if (!canvas) return;
+      try {
+        const existing = Chart.getChart(canvas);
+        if (existing) {
+          window.waterChart = existing;
+          return;
+        }
+      } catch (e) {
+        console.error('Error checking existing chart:', e);
+        return;
+      }
+
       const ctx = canvas.getContext('2d');
-      new Chart(ctx, {
+      window.waterChart = new Chart(ctx, {
         type: 'line',
         data: {
           labels: sampleLabels,
