@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/EvacuationCenterModel.php';
+require_once __DIR__ . '/../models/ContactModel.php';
+require_once __DIR__ . '/../models/MeasureModel.php';
 
 class InfoController extends Controller
 {
@@ -13,8 +15,12 @@ class InfoController extends Controller
     public function index()
     {
         $centers = $this->model->all();
+        $contactModel = new ContactModel();
+        $contacts = $contactModel->all();
+        $measureModel = new MeasureModel();
+        $measures = $measureModel->all();
         $user = $_SESSION['user'] ?? null;
-        $this->render('information', ['centers' => $centers, 'user' => $user]);
+        $this->render('information', ['centers' => $centers, 'contacts' => $contacts, 'measures' => $measures, 'user' => $user]);
     }
 
     public function store()

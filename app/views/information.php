@@ -31,7 +31,7 @@
           <img src="app/views/assets/img/app_icon.png" class="logo-img" alt="HydroAlert">
           <div>
             <div class="fw-bold">HydroAlert</div>
-            <small class="text-white-50">Monitoring</small>
+              <small class="text-white-50">Monitoring</small>
           </div>
         </div>
       </div>
@@ -51,49 +51,132 @@
         </div>
       </div>
 
-      <div class="card card-soft p-3 mb-3">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <h5 class="mb-0">Evacuation Centers</h5>
-            <small class="text-muted">Add, edit, delete centers and manage status</small>
-          </div>
-          <div>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#evacModal" id="addCenterBtn">Add Evacuation Center</button>
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="mb-0">Evacuation Centers</h5>
+                <small class="text-muted">Add, edit, delete centers and manage status</small>
+              </div>
+              <button class="btn btn-sm btn-primary" id="addCenterBtn">Add Evacuation Center</button>
+            </div>
+            <div class="card-body">
+              <div style="max-height:200px; overflow:auto;">
+                <table class="table table-sm table-hover" id="evacTable">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Address</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php foreach (($centers ?? []) as $c): ?>
+                    <tr data-id="<?php echo htmlspecialchars($c['id']); ?>">
+                      <td><?php echo htmlspecialchars($c['name']); ?></td>
+                      <td><?php echo htmlspecialchars($c['address']); ?></td>
+                      <td>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input status-toggle" type="checkbox" role="switch" <?php echo ($c['status'] ?? 'active') === 'active' ? 'checked' : ''; ?> data-id="<?php echo htmlspecialchars($c['id']); ?>">
+                          <label class="form-check-label small"><?php echo htmlspecialchars($c['status'] ?? 'active'); ?></label>
+                        </div>
+                      </td>
+                      <td>
+                        <a class="btn btn-sm btn-outline-secondary editBtn" href="#" data-id="<?php echo htmlspecialchars($c['id']); ?>">Edit</a>
+                        <a class="btn btn-sm btn-outline-danger deleteBtn" href="#" data-href="?url=info/delete&id=<?php echo htmlspecialchars($c['id']); ?>">Delete</a>
+                      </td>
+                    </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="row g-3">
+      <div class="col-12 mt-3">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-0">Emergency Measures</h5>
+              <small class="text-muted">Local emergency measures and instructions</small>
+            </div>
+            <button id="addMeasureBtn" class="btn btn-sm btn-primary">Add Measure</button>
+          </div>
+          <div class="card-body">
+            <div style="max-height:200px; overflow:auto;">
+              <table class="table table-sm table-hover">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php if (!empty($measures)) : ?>
+                    <?php foreach ($measures as $m) : ?>
+                      <tr>
+                        <td><?php echo htmlspecialchars($m['title']); ?></td>
+                        <td><?php echo htmlspecialchars(strlen($m['description']) > 100 ? substr($m['description'], 0, 100) . '...' : $m['description']); ?></td>
+                        <td>
+                          <a href="#" class="btn btn-sm btn-outline-secondary edit-measure" data-id="<?php echo $m['id']; ?>">Edit</a>
+                          <a href="#" class="btn btn-sm btn-outline-danger delete-measure" data-href="?url=measure/delete&id=<?php echo $m['id']; ?>">Delete</a>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  <?php else : ?>
+                    <tr>
+                      <td colspan="3">No measures defined.</td>
+                    </tr>
+                  <?php endif; ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-4">
         <div class="col-12">
-          <div class="card card-soft p-3">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Address</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php foreach (($centers ?? []) as $c): ?>
-                <tr data-id="<?php echo htmlspecialchars($c['id']); ?>">
-                  <td><?php echo htmlspecialchars($c['name']); ?></td>
-                  <td><?php echo htmlspecialchars($c['address']); ?></td>
-                  <td>
-                    <div class="form-check form-switch">
-                      <input class="form-check-input status-toggle" type="checkbox" role="switch" <?php echo ($c['status'] ?? 'active') === 'active' ? 'checked' : ''; ?> data-id="<?php echo htmlspecialchars($c['id']); ?>">
-                      <label class="form-check-label small"><?php echo htmlspecialchars($c['status'] ?? 'active'); ?></label>
-                    </div>
-                  </td>
-                  <td>
-                    <button class="btn btn-sm btn-outline-secondary editBtn" data-id="<?php echo htmlspecialchars($c['id']); ?>">Edit</button>
-                    <a class="btn btn-sm btn-danger deleteBtn" href="#" data-href="?url=info/delete&id=<?php echo htmlspecialchars($c['id']); ?>">Delete</a>
-                  </td>
-                </tr>
-                <?php endforeach; ?>
-              </tbody>
-            </table>
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="mb-0">Contacts</h5>
+                <small class="text-muted">Manage emergency contacts for SMS/alerts</small>
+              </div>
+              <button class="btn btn-sm btn-primary" id="addContactBtn">Add Contact</button>
+            </div>
+            <div class="card-body">
+              <div style="max-height:200px; overflow:auto;">
+                <table class="table table-sm table-hover" id="contactsTable">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Phone</th>
+                      <th>Email</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php foreach (($contacts ?? []) as $ct): ?>
+                    <tr data-id="<?php echo htmlspecialchars($ct['id']); ?>">
+                      <td><?php echo htmlspecialchars($ct['name']); ?></td>
+                      <td><?php echo htmlspecialchars($ct['phone']); ?></td>
+                      <td><?php echo !empty($ct['email']) ? htmlspecialchars($ct['email']) : 'None'; ?></td>
+                      <td>
+                        <a class="btn btn-sm btn-outline-secondary contact-editBtn" href="#" data-id="<?php echo htmlspecialchars($ct['id']); ?>">Edit</a>
+                        <a class="btn btn-sm btn-outline-danger contact-deleteBtn" href="#" data-href="?url=contact/delete&id=<?php echo htmlspecialchars($ct['id']); ?>">Delete</a>
+                      </td>
+                    </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -137,31 +220,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="app/views/assets/js/evacuation.js"></script>
-  <script>
-    // Intercept logout link on Information page and confirm via SweetAlert2
-    document.addEventListener('click', function (ev) {
-      const link = ev.target.closest && ev.target.closest('a[href*="?url=auth/logout"]');
-      if (!link) return;
-      ev.preventDefault();
-      try {
-        Swal.fire({
-          title: 'Log out?',
-          text: 'Are you sure you want to log out?',
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonText: 'Yes, log out',
-          cancelButtonText: 'Cancel'
-        }).then(result => {
-          if (result.isConfirmed) {
-            window.location.href = link.href;
-          }
-        });
-      } catch (e) {
-        if (confirm('Are you sure you want to log out?')) {
-          window.location.href = link.href;
-        }
-      }
-    });
-  </script>
+  <script src="app/views/assets/js/contacts.js"></script>
+    <script src="app/views/assets/js/measures.js"></script>
+  <script src="app/views/assets/js/information.js"></script>
 </body>
 </html>

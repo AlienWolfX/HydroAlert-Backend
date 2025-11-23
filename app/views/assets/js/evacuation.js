@@ -84,8 +84,15 @@ document.addEventListener('DOMContentLoaded', function () {
       cancelButtonText: 'Cancel'
     }).then(result => {
       if (result.isConfirmed) {
+        try { sessionStorage.setItem('hydroalert_scroll', String(window.scrollY || window.pageYOffset || 0)); } catch(e){}
         window.location.href = href;
       }
     });
   });
+
+  if (evacForm) {
+    evacForm.addEventListener('submit', function () {
+      try { sessionStorage.setItem('hydroalert_scroll', String(window.scrollY || window.pageYOffset || 0)); } catch (e) {}
+    });
+  }
 });
