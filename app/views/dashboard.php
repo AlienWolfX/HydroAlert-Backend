@@ -98,7 +98,7 @@
                   <tr>
                     <th>Time</th>
                     <th>IMEI</th>
-                    <th>Distance (m)</th>
+                    <th>Distance (cm)</th>
                     <th>Water Level</th>
                     <th>Status</th>
                   </tr>
@@ -113,12 +113,12 @@
       </div>
     </main>
   </div>
-  <footer class="mt-auto text-center small text-muted py-2 border-top">&copy; <?php echo date('Y'); ?> HydroAlert</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="app/views/assets/js/uptime.js"></script>
   <script src="app/views/assets/js/clock.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     // chart instance (created on first load)
     window.waterChart = null;
@@ -136,10 +136,13 @@
         const json = await res.json().catch(e => { throw new Error('Invalid JSON response: ' + e.message); });
         tbody.innerHTML = '';
         if (json && json.success && Array.isArray(json.data) && json.data.length) {
-          // prepare arrays for table and chart (oldest first)
-          const rows = json.data.slice().reverse();
+          // json.data is returned newest-first from the API. Show newest-first in the table,
+          // but build the chart dataset oldest→newest (reverse of the table order) so the chart reads left→right chronologically.
+          const rows = json.data; // newest first
           const labels = [];
           const data = [];
+
+          // populate table (newest first)
           rows.forEach(r => {
             let time = '';
             if (r.created_at) {
@@ -154,8 +157,20 @@
             const status = r.status || '';
             const tr = `<tr><td>${time}</td><td>${imei}</td><td>${distance}</td><td>${wl !== null ? wl : ''}</td><td>${status}</td></tr>`;
             tbody.insertAdjacentHTML('beforeend', tr);
-            labels.push(time);
-            data.push(wl !== null ? wl : null);
+          });
+
+          const chartRows = rows.slice().reverse();
+          chartRows.forEach(r => {
+            let time = '';
+            if (r.created_at) {
+              time = r.created_at;
+            } else if (r.device_timestamp) {
+              const d2 = new Date(r.device_timestamp * 1000);
+              if (!isNaN(d2)) time = d2.toISOString();
+            }
+            const wl = r.water_level !== null && r.water_level !== undefined ? r.water_level : null;
+            labels.push(String(time !== null && time !== undefined ? time : ''));
+            data.push(wl !== null ? Number(wl) : null);
           });
 
           // update or create chart
@@ -207,9 +222,33 @@
     setInterval(loadReadings, 5000);
   </script>
   <script>
-    const sampleLabels = ['-6h','-5h','-4h','-3h','-2h','-1h','Now'];
-    const sampleData = [2.10,2.30,2.50,2.70,2.60,2.80,3.00];
-
+    // Intercept logout links and confirm via SweetAlert2
+    document.addEventListener('click', function (ev) {
+      const link = ev.target.closest && ev.target.closest('a[href*="?url=auth/logout"]');
+      if (!link) return;
+      ev.preventDefault();
+      try {
+        Swal.fire({
+          title: 'Log out?',
+          text: 'Are you sure you want to log out?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, log out',
+          cancelButtonText: 'Cancel'
+        }).then(result => {
+          if (result.isConfirmed) {
+            window.location.href = link.href;
+          }
+        });
+      } catch (e) {
+        // fallback if Swal is not available
+        if (confirm('Are you sure you want to log out?')) {
+          window.location.href = link.href;
+        }
+      }
+    });
+  </script>
+  <script>
     (function() {
       const canvas = document.getElementById('waterChart');
       if (!canvas) return;

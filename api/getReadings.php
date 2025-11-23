@@ -18,8 +18,16 @@ $pdo = Database::getInstance()->getConnection();
 $imei = isset($_GET['imei']) ? trim($_GET['imei']) : null;
 $since = isset($_GET['since']) ? intval($_GET['since']) : null; 
 $until = isset($_GET['until']) ? intval($_GET['until']) : null;
-$limit = isset($_GET['limit']) ? intval($_GET['limit']) : 100;
-if ($limit <= 0 || $limit > 1000) $limit = 100;
+
+$latest = false;
+if (isset($_GET['latest'])) {
+    $v = strtolower(trim((string)$_GET['latest']));
+    $latest = ($v === '1' || $v === 'true' || $v === 'yes');
+}
+
+$limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
+if ($limit <= 0 || $limit > 1000) $limit = 10;
+if ($latest) $limit = 1;
 
 $params = [];
 $where = [];

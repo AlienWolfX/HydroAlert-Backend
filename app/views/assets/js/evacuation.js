@@ -17,14 +17,16 @@ document.addEventListener('DOMContentLoaded', function () {
     modal.show();
   });
 
-  // Edit buttons
   document.querySelectorAll('.editBtn').forEach(btn => {
     btn.addEventListener('click', function () {
       const id = this.getAttribute('data-id');
       fetch('?url=info/find&id=' + encodeURIComponent(id))
         .then(r => r.json())
         .then(json => {
-          if (!json.success) return alert('Record not found');
+          if (!json.success) {
+            alert('Record not found');
+            return;
+          }
           const row = json.row;
           centerId.value = row.id;
           centerName.value = row.name || '';
@@ -33,6 +35,9 @@ document.addEventListener('DOMContentLoaded', function () {
           const modalEl = document.getElementById('evacModal');
           const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
           modal.show();
+        }).catch(err => {
+          console.error(err);
+          alert('Error fetching record: ' + String(err));
         });
     });
   });
@@ -50,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(r => r.json())
       .then(json => {
         if (!json.success) {
-          alert('Unable to update status');
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Unable to update status' });
           // revert
           this.checked = !this.checked;
         } else {
@@ -58,7 +63,29 @@ document.addEventListener('DOMContentLoaded', function () {
           const label = this.parentElement.querySelector('.form-check-label');
           if (label) label.textContent = json.row.status;
         }
+      }).catch(err => {
+        Swal.fire({ icon: 'error', title: 'Error', text: String(err) });
+        this.checked = !this.checked;
       });
+    });
+  });
+
+  document.addEventListener('click', function (ev) {
+    const target = ev.target.closest && ev.target.closest('.deleteBtn');
+    if (!target) return;
+    ev.preventDefault();
+    const href = target.getAttribute('data-href') || target.getAttribute('href');
+    Swal.fire({
+      title: 'Delete center?',
+      text: 'This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'Cancel'
+    }).then(result => {
+      if (result.isConfirmed) {
+        window.location.href = href;
+      }
     });
   });
 });

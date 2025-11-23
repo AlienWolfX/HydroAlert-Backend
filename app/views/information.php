@@ -58,7 +58,7 @@
             <small class="text-muted">Add, edit, delete centers and manage status</small>
           </div>
           <div>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#evacModal" id="addCenterBtn">Add Center</button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#evacModal" id="addCenterBtn">Add Evacuation Center</button>
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@
                   </td>
                   <td>
                     <button class="btn btn-sm btn-outline-secondary editBtn" data-id="<?php echo htmlspecialchars($c['id']); ?>">Edit</button>
-                    <a class="btn btn-sm btn-danger" href="?url=info/delete&id=<?php echo htmlspecialchars($c['id']); ?>" onclick="return confirm('Delete this center?');">Delete</a>
+                    <a class="btn btn-sm btn-danger deleteBtn" href="#" data-href="?url=info/delete&id=<?php echo htmlspecialchars($c['id']); ?>">Delete</a>
                   </td>
                 </tr>
                 <?php endforeach; ?>
@@ -133,9 +133,35 @@
       </div>
     </main>
   </div>
-  <footer class="mt-auto text-center small text-muted py-2 border-top">&copy; <?php echo date('Y'); ?> HydroAlert</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="app/views/assets/js/evacuation.js"></script>
+  <script>
+    // Intercept logout link on Information page and confirm via SweetAlert2
+    document.addEventListener('click', function (ev) {
+      const link = ev.target.closest && ev.target.closest('a[href*="?url=auth/logout"]');
+      if (!link) return;
+      ev.preventDefault();
+      try {
+        Swal.fire({
+          title: 'Log out?',
+          text: 'Are you sure you want to log out?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, log out',
+          cancelButtonText: 'Cancel'
+        }).then(result => {
+          if (result.isConfirmed) {
+            window.location.href = link.href;
+          }
+        });
+      } catch (e) {
+        if (confirm('Are you sure you want to log out?')) {
+          window.location.href = link.href;
+        }
+      }
+    });
+  </script>
 </body>
 </html>
