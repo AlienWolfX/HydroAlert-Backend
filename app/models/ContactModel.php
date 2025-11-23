@@ -12,7 +12,6 @@ class ContactModel {
             `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
             `name` VARCHAR(255) NOT NULL,
             `phone` VARCHAR(64) DEFAULT '',
-            `email` VARCHAR(255) DEFAULT '',
             `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
             `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
@@ -36,12 +35,11 @@ class ContactModel {
 
     public function create($data)
     {
-        $stmt = $this->pdo->prepare('INSERT INTO contacts (name, phone, email, created_at, updated_at) VALUES (:name, :phone, :email, :created_at, :updated_at)');
+        $stmt = $this->pdo->prepare('INSERT INTO contacts (name, phone, created_at, updated_at) VALUES (:name, :phone, :created_at, :updated_at)');
         $now = date('Y-m-d H:i:s');
         $stmt->execute([
             'name' => $data['name'] ?? '',
             'phone' => $data['phone'] ?? '',
-            'email' => $data['email'] ?? '',
             'created_at' => $now,
             'updated_at' => $now,
         ]);
@@ -54,7 +52,7 @@ class ContactModel {
         $params = ['id' => $id];
         if (isset($data['name'])) { $fields[] = 'name = :name'; $params['name'] = $data['name']; }
         if (isset($data['phone'])) { $fields[] = 'phone = :phone'; $params['phone'] = $data['phone']; }
-        if (isset($data['email'])) { $fields[] = 'email = :email'; $params['email'] = $data['email']; }
+        // email removed
         if (empty($fields)) return $this->find($id);
 
         $sql = 'UPDATE contacts SET ' . implode(', ', $fields) . ', updated_at = :updated_at WHERE id = :id';

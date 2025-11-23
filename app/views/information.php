@@ -157,7 +157,6 @@
                     <tr>
                       <th>Name</th>
                       <th>Phone</th>
-                      <th>Email</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -166,7 +165,6 @@
                     <tr data-id="<?php echo htmlspecialchars($ct['id']); ?>">
                       <td><?php echo htmlspecialchars($ct['name']); ?></td>
                       <td><?php echo htmlspecialchars($ct['phone']); ?></td>
-                      <td><?php echo !empty($ct['email']) ? htmlspecialchars($ct['email']) : 'None'; ?></td>
                       <td>
                         <a class="btn btn-sm btn-outline-secondary contact-editBtn" href="#" data-id="<?php echo htmlspecialchars($ct['id']); ?>">Edit</a>
                         <a class="btn btn-sm btn-outline-danger contact-deleteBtn" href="#" data-href="?url=contact/delete&id=<?php echo htmlspecialchars($ct['id']); ?>">Delete</a>

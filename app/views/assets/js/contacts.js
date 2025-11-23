@@ -12,7 +12,6 @@
             <input type="hidden" name="id" id="contactId">
             <div class="mb-3"><label class="form-label">Name</label><input class="form-control" name="name" id="contactName" required></div>
             <div class="mb-3"><label class="form-label">Phone</label><input class="form-control" name="phone" id="contactPhone" required></div>
-            <div class="mb-3"><label class="form-label">Email</label><input class="form-control" name="email" id="contactEmail"></div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -30,12 +29,11 @@
     contactModalAdded = true;
   }
 
-  if (addBtn) addBtn.addEventListener('click', function () {
+    if (addBtn) addBtn.addEventListener('click', function () {
     ensureContactModal();
     document.getElementById('contactId').value = '';
     document.getElementById('contactName').value = '';
     document.getElementById('contactPhone').value = '';
-    document.getElementById('contactEmail').value = '';
     const modalEl = document.getElementById('contactModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
     modal.show();
@@ -56,7 +54,6 @@
         document.getElementById('contactId').value = row.id || '';
         document.getElementById('contactName').value = row.name || '';
         document.getElementById('contactPhone').value = row.phone || '';
-        document.getElementById('contactEmail').value = row.email || '';
         const modalEl = document.getElementById('contactModal');
         const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
         modal.show();
