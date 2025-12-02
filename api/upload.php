@@ -154,7 +154,9 @@ if ($imei && base64_decode($imei, true) !== false && preg_match('/^[A-Za-z0-9+\/
 }
 
 try {
-    $stmt = $pdo->prepare('INSERT INTO readings (imei, distance, water_level, status, device_timestamp, max_depth) VALUES (:imei, :distance, :water_level, :status, :device_timestamp, :max_depth)');
+    // use PHP-generated timestamp for created_at (respecting app timezone)
+    $createdAt = date('Y-m-d H:i:s');
+    $stmt = $pdo->prepare('INSERT INTO readings (imei, distance, water_level, status, device_timestamp, max_depth, created_at) VALUES (:imei, :distance, :water_level, :status, :device_timestamp, :max_depth, :created_at)');
     $stmt->execute([
         'imei' => $imei,
         'distance' => $distance,
@@ -162,6 +164,7 @@ try {
         'status' => $status,
         'device_timestamp' => $deviceTs,
         'max_depth' => $maxDepth,
+        'created_at' => $createdAt,
     ]);
     $id = $pdo->lastInsertId();
     echo json_encode(['success' => true, 'id' => $id]);

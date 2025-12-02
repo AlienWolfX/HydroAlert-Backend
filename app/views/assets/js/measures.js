@@ -12,12 +12,7 @@
             <input type="hidden" name="id" id="measureId">
             <div class="mb-3"><label class="form-label">Title</label><input class="form-control" name="title" id="measureTitle" required></div>
             <div class="mb-3"><label class="form-label">Description</label><textarea class="form-control" name="description" id="measureDescription"></textarea></div>
-            <div class="mb-3"><label class="form-label">Status</label>
-              <select class="form-select" name="status" id="measureStatus">
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
+            <!-- status removed: measures default to active on server -->
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -39,7 +34,6 @@
     document.getElementById('measureId').value = '';
     document.getElementById('measureTitle').value = '';
     document.getElementById('measureDescription').value = '';
-    document.getElementById('measureStatus').value = 'active';
     const modalEl = document.getElementById('measureModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
     modal.show();
@@ -59,7 +53,6 @@
         document.getElementById('measureId').value = row.id || '';
         document.getElementById('measureTitle').value = row.title || '';
         document.getElementById('measureDescription').value = row.description || '';
-        document.getElementById('measureStatus').value = row.status || 'active';
         const modalEl = document.getElementById('measureModal');
         const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
         modal.show();

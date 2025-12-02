@@ -123,8 +123,8 @@
                         <td><?php echo htmlspecialchars($m['title']); ?></td>
                         <td><?php echo htmlspecialchars(strlen($m['description']) > 100 ? substr($m['description'], 0, 100) . '...' : $m['description']); ?></td>
                         <td>
-                          <a href="#" class="btn btn-sm btn-outline-secondary edit-measure" data-id="<?php echo $m['id']; ?>">Edit</a>
-                          <a href="#" class="btn btn-sm btn-outline-danger delete-measure" data-href="?url=measure/delete&id=<?php echo $m['id']; ?>">Delete</a>
+                          <a href="#" class="btn btn-sm btn-outline-secondary measure-editBtn" data-id="<?php echo $m['id']; ?>">Edit</a>
+                          <a href="#" class="btn btn-sm btn-outline-danger measure-deleteBtn" data-href="?url=measure/delete&id=<?php echo $m['id']; ?>">Delete</a>
                         </td>
                       </tr>
                     <?php endforeach; ?>

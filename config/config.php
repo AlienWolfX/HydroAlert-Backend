@@ -26,6 +26,8 @@ if (file_exists($envFile)) {
     }
 }
 
+date_default_timezone_set('Asia/Manila');
+
 return [
     'db_host' => getenv('DB_HOST') ?: ($dotEnv['DB_HOST'] ?? 'localhost'),
     'db_name' => getenv('DB_NAME') ?: ($dotEnv['DB_NAME'] ?? 'hydroalert_db'),

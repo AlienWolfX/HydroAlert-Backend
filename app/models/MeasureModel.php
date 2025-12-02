@@ -41,7 +41,8 @@ class MeasureModel {
         $stmt->execute([
             'title' => $data['title'] ?? '',
             'description' => $data['description'] ?? '',
-            'status' => in_array(($data['status'] ?? 'active'), ['active','inactive']) ? $data['status'] : 'active',
+            // ensure status defaults to 'active' when not provided
+            'status' => (function($d){ $s = $d['status'] ?? 'active'; return in_array($s, ['active','inactive']) ? $s : 'active'; })($data),
             'created_at' => $now,
             'updated_at' => $now,
         ]);
